@@ -4,16 +4,28 @@ import { useRouter } from 'next/router';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = () => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.email === email && user.password === password) {
-      localStorage.setItem('loggedIn', 'true');
-      router.push('/chat');
-    } else {
-      alert('بيانات الدخول غير صحيحة');
+  const handleLogin = async () => {
+    if (!email || !password) return alert('يرجى إدخال البريد وكلمة المرور');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        router.push('/chat');
+      } else {
+        alert(data.error || 'فشل تسجيل الدخول');
+      }
+    } catch (err) {
+      alert('خطأ في الاتصال بالخادم');
     }
+    setLoading(false);
   };
 
   return (
@@ -33,8 +45,8 @@ export default function LoginPage() {
         onChange={(e) => setPassword(e.target.value)}
         style={{ padding: '0.5rem', width: '250px' }}
       /><br /><br />
-      <button onClick={handleLogin} style={{ padding: '0.5rem 1rem' }}>
-        دخول
+      <button onClick={handleLogin} disabled={loading} style={{ padding: '0.5rem 1rem' }}>
+        {loading ? 'جاري التحقق...' : 'دخول'}
       </button>
     </div>
   );
