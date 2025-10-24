@@ -1,3 +1,5 @@
+// lib/ProjectBuilder.ts
+
 type FileMap = { [filename: string]: string };
 
 export function parseAIResponseToFiles(aiText: string): FileMap {
