@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  swcMinify: true,
   images: {
-    domains: ['localhost', 'vercel.app'],
+    domains: ['res.cloudinary.com', 'vercel.app'],
   },
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
